@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify,send_file
 from notion_client import Client
 from dotenv import load_dotenv
 import os
@@ -46,6 +46,11 @@ def get_books():
         start_cursor = response.get("next_cursor")
     books = [clean_book(page) for page in all_results]
     return jsonify(books)
+
+@app.route("/search")
+def search_page():
+    return send_file("index.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)

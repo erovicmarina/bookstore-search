@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang = "sr">
+<head>
+    <meta charset="UTF-8">
+    <title>Pretraga knjiga</title>
+    <style>
+        body {font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px;}
+        input { width: 100%; padding: 10px; font-size: 16px; box-sizing: border-box; }
+        .book { border-bottom: 1px solid #ccc; padding: 10px 0; }
+        .status { font-size: 12px; color: #888; }
+    </style>
+</head>
+
+<body>
+    <h1>Pretraga knjiga</h1>
+    <input type = "text" id = "searchBox" placeholder="Ukucaj naslov ili autora...">
+    <div id="results"></div>
+
+    <script>
+        let allBooks = [];
+
+        fetch("/api/books")
+            .then(response => response.json())
+            .then(data => {
+                allBooks = data;
+                showResults(allBooks);
+            });
+        function showResults(books){
+            const container = document.getElementById("results")
+            container.innerHTML = "";
+            books.forEach(book => {
+                const div = document.createElement("div");
+                div.className = "book";
+                div.innerHTML = `<strong>${book.naziv}</strong><br>${book.autor}<br><span class="status">${book.status}</span>`;
+                container.appendChild(div);
+            });
+        }
+
+        document.getElementById("searchBox").addEventListener("input", function(){
+            const query = this.value.toLowerCase();
+            const filtered = allBooks.filter(book =>
+                book.naziv.toLowerCase().includes(query) ||
+                book.autor.toLowerCase().includes(query)
+            );
+            showResults(filtered);
+        });
+    </script>
+</body>
+</html>
