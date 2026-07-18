@@ -29,8 +29,22 @@ def clean_book(page):
     }
 @app.route("/api/books")
 def get_books():
-    response = notion.data_sources.query(data_source_id=datasource_id)
-    books = [clean_book(page) for page in response["results"]]
+    all_results = []
+    has_more = True
+    start_cursor = None
+
+    while has_more:
+        if start_cursor:
+            response = notion.data_sources.query(
+                data_source_id = datasource_id,
+                start_cursor = start_cursor
+            )
+        else:
+            response = notion.data_sources.query(data_source_id=datasource_id)
+        all_results.extend(response["results"])
+        has_more = response["has_more"]
+        start_cursor = response.get("next_cursor")
+    books = [clean_book(page) for page in all_results]
     return jsonify(books)
 
 if __name__ == "__main__":
