@@ -4,16 +4,79 @@
     <meta charset="UTF-8">
     <title>Pretraga knjiga</title>
     <style>
-        body {font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px;}
-        input { width: 100%; padding: 10px; font-size: 16px; box-sizing: border-box; }
-        .book { border-bottom: 1px solid #ccc; padding: 10px 0; }
-        .status { font-size: 12px; color: #888; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #faf7f2;
+            color: #2b2620;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 4px;
+        }
+        .subtitle {
+            color: #7a7268;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 16px;
+            border: 1px solid #ddd6c9;
+            border-radius: 10px;
+            box-sizing: border-box;
+            background: white;
+        }
+        input:focus {
+            outline: none;
+            border-color: #8a6d3b;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        .book {
+            background: white;
+            border: 1px solid #ede8dc;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+        }
+        .book strong {
+            font-size: 16px;
+        }
+        .book .autor {
+            color: #555;
+            font-size: 14px;
+            margin: 2px 0 8px 0;
+        }
+        .badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: 999px;
+            letter-spacing: 0.3px;
+        }
+        .badge.dostupna { background: #e3f3e6; color: #2f7a3d; }
+        .badge.pozajmljena { background: #fdecd6; color: #b5680c; }
+        .badge.rezervisana { background: #e6e9fb; color: #3b4bc4; }
+        .badge.otpisana, .badge.ostecena { background: #f5e3e3; color: #a13b3b; }
+        .badge.nepoznato { background: #eee; color: #888; }
+        .no-results {
+            color: #999;
+            font-style: italic;
+            padding: 20px 0;
+        }
     </style>
 </head>
 
 <body>
-    <h1>Pretraga knjiga</h1>
-    <input type = "text" id = "searchBox" placeholder="Ukucaj naslov ili autora...">
+    <h1>🔍 Pretraga knjiga</h1>
+    <div class="subtitle">Knjizevni klub Naravoučenije</div>
+    <input type="text" id="searchBox" placeholder="Ukucaj naslov ili autora...">
     <div id="results"></div>
 
     <script>
@@ -25,13 +88,26 @@
                 allBooks = data;
                 showResults(allBooks);
             });
+
+        function statusClass(status) {
+            return status.toLowerCase();
+        }
+
         function showResults(books){
             const container = document.getElementById("results")
             container.innerHTML = "";
+            if (books.length === 0) {
+                container.innerHTML = '<div class="no-results">Nema pronađenih knjiga.</div>';
+                return;
+            }
             books.forEach(book => {
                 const div = document.createElement("div");
                 div.className = "book";
-                div.innerHTML = `<strong>${book.naziv}</strong><br>${book.autor}<br><span class="status">${book.status}</span>`;
+                div.innerHTML = `
+                    <strong>${book.naziv}</strong>
+                    <div class="autor">${book.autor}</div>
+                    <span class="badge ${statusClass(book.status)}">${book.status}</span>
+                `;
                 container.appendChild(div);
             });
         }
